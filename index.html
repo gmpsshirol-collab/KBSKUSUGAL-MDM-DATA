@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="kn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ಕುಸುಗಲ್ — ದಿನದ ಮಾಹಿತಿ</title>
+<style>
+  :root{ --bg:#f6f4ee; --card:#fff; --ink:#1d2b27; --muted:#7a7566; --line:#d9d4c4; --brand:#1f423a; --soft:#dce9e4; --tot:#f2efe3; --warn:#b23a2e; --warnbg:#f6dad6; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:'Noto Sans Kannada','Nirmala UI',Tunga,system-ui,sans-serif; line-height:1.5; }
+  .wrap{ max-width:880px; margin:0 auto; padding:16px; }
+  h1{ font-size:1.35rem; margin:0 0 2px; color:var(--brand); }
+  .sub{ color:var(--muted); font-size:.9rem; margin:0 0 14px; }
+  .bar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px; }
+  .bar input[type=date]{ font:inherit; font-size:1.05rem; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); }
+  button{ font:inherit; cursor:pointer; border:1px solid var(--brand); background:var(--brand); color:#fff; border-radius:8px; padding:8px 14px; }
+  button.sec{ background:#fff; color:var(--brand); }
+  button:disabled{ opacity:.55; cursor:wait; }
+  .status{ font-size:.85rem; color:var(--muted); margin:8px 2px 12px; min-height:1.3em; }
+  .status.err{ color:var(--warn); white-space:pre-wrap; }
+  .cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+  .card .l{ font-size:.8rem; color:var(--muted); }
+  .card .n{ font-size:1.7rem; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums; }
+  table{ width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-variant-numeric:tabular-nums; }
+  th,td{ padding:9px 10px; text-align:center; border-bottom:1px solid var(--line); }
+  th{ background:var(--soft); font-weight:700; font-size:.92rem; }
+  td:first-child,th:first-child{ text-align:left; }
+  tr.miss td{ color:var(--muted); background:#faf8f2; }
+  tr.miss td.msg{ font-size:.85rem; }
+  tr.sub td{ background:var(--soft); font-weight:700; color:var(--brand); border-top:1px solid var(--brand); }
+  tr.tot td{ background:var(--tot); font-weight:700; font-size:1.05rem; border-top:2px solid var(--brand); }
+  h2{ font-size:1rem; margin:18px 0 8px; color:var(--brand); }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{ background:#fff; color:var(--brand); border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:.85rem; }
+  .chip.on{ background:var(--brand); color:#fff; border-color:var(--brand); }
+  .note{ font-size:.85rem; color:var(--muted); margin-top:8px; }
+  .empty{ text-align:center; padding:28px 10px; color:var(--muted); background:var(--card); border:1px dashed var(--line); border-radius:12px; }
+  td small{ display:block; font-size:.72rem; font-weight:400; }
+  @media (max-width:560px){
+    .wrap{ padding:10px; }
+    h1{ font-size:1.15rem; }
+    .bar{ display:grid; grid-template-columns:48px 1fr 48px; gap:8px; }
+    .bar input[type=date]{ width:100%; min-width:0; font-size:1.05rem; }
+    .bar button{ padding:11px 10px; }
+    #todayBtn,#reloadBtn,#printBtn{ grid-column:1 / -1; }
+    .cards{ grid-template-columns:repeat(2,1fr); gap:8px; }
+    .card .n{ font-size:1.5rem; }
+    th,td{ padding:8px 3px; font-size:.86rem; }
+    th{ font-size:.78rem; }
+    td:first-child,th:first-child{ padding-left:8px; }
+    .chip{ padding:6px 12px; font-size:.9rem; }
+  }
+  @media print{ .bar,.chips,.noprint,h2.noprint{ display:none !important; } body{ background:#fff; } .wrap{ padding:0; } }
+</style>
+<meta name="theme-color" content="#1f423a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ಕುಸುಗಲ್">
+</head>
+<body>
+<div class="wrap">
+  <h1>ಕುಸುಗಲ್ — ದಿನದ ಮಾಹಿತಿ</h1>
+  <p class="sub">ದಿನಾಂಕ ಆರಿಸಿದರೆ ತರಗತಿವಾರು ದಾಖಲಾತಿ, ಹಾಜರಾತಿ, ಮೊಟ್ಟೆ ಮತ್ತು ಬಾಳೆಹಣ್ಣು ಹಾಗೂ ಒಟ್ಟು ಮಾಹಿತಿ ತೋರಿಸುತ್ತದೆ.</p>
+
+  <div class="bar">
+    <button class="sec" id="prevBtn" type="button" title="ಹಿಂದಿನ ದಿನ">◀</button>
+    <input type="date" id="dateInput">
+    <button class="sec" id="nextBtn" type="button" title="ಮುಂದಿನ ದಿನ">▶</button>
+    <button class="sec" id="todayBtn" type="button">ಇಂದು</button>
+    <button id="reloadBtn" type="button">ಮಾಹಿತಿ ಹೊಸದಾಗಿ ತನ್ನಿ</button>
+    <button class="sec noprint" id="printBtn" type="button">ಪ್ರಿಂಟ್ / PDF</button>
+  </div>
+  <div class="status" id="status">ಮಾಹಿತಿ ತರುತ್ತಿದೆ…</div>
+
+  <div id="out"></div>
+
+  <h2 class="noprint">ಮಾಹಿತಿ ಇರುವ ಇತ್ತೀಚಿನ ದಿನಾಂಕಗಳು</h2>
+  <div class="chips noprint" id="chips"></div>
+</div>
+
+<script>
+// ===== ಈ ಶಾಲೆಯ ಸೆಟ್ಟಿಂಗ್ =====
+const SCHOOL_NAME = "ಕುಸುಗಲ್";
+const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbwvPVnBjmurhqMLhGYBJ-T1RXp-gItlnTPoQR2JkLl3BYk9lJCMmXTQ3Ta4pI-SUHrf/exec";   // Apps Script (…/exec) — ಮೊದಲ ಆಯ್ಕೆ
+const SHEET_ID    = "1PIP9q1n7NVxkZVBI3xlTro_t6dgUETqduHZOa_5MoMk";    // ಪರ್ಯಾಯ: ಶೀಟ್ ನೇರವಾಗಿ (ಲಿಂಕ್ ಇರುವವರಿಗೆ ವೀಕ್ಷಣೆ ಅನುಮತಿ ಬೇಕು)
+const SHEET_TAB   = "MDM_Reports";
+
+const CLASSES = [
+  {k:'lkg', t:'ಎಲ್.ಕೆ.ಜಿ'}, {k:'ukg', t:'ಯು.ಕೆ.ಜಿ'},
+  {k:'c1', t:'1ನೇ ತರಗತಿ'}, {k:'c2', t:'2ನೇ ತರಗತಿ'}, {k:'c3', t:'3ನೇ ತರಗತಿ'}, {k:'c4', t:'4ನೇ ತರಗತಿ'},
+  {k:'c5', t:'5ನೇ ತರಗತಿ'}, {k:'c6', t:'6ನೇ ತರಗತಿ'}, {k:'c7', t:'7ನೇ ತರಗತಿ'}
+];
+// ಗುಂಪು ಒಟ್ಟು: ಈ ತರಗತಿಯ ನಂತರ ಉಪ-ಒಟ್ಟು ಸಾಲು ಬರುತ್ತದೆ
+const GROUPS = [
+  {end:'ukg', t:'ಎಲ್.ಕೆ.ಜಿ + ಯು.ಕೆ.ಜಿ ಒಟ್ಟು', members:['lkg','ukg']},
+  {end:'c5',  t:'1 ರಿಂದ 5 ಒಟ್ಟು', members:['c1','c2','c3','c4','c5']},
+  {end:'c7',  t:'6 ರಿಂದ 7 ಒಟ್ಟು', members:['c6','c7']}
+];
+const $ = (id) => document.getElementById(id);
+let ROWS = [];          // ಸಾಮಾನ್ಯೀಕರಿಸಿದ ಸಾಲುಗಳು
+
+/* ---------- ಮಾಹಿತಿ ತರುವುದು ---------- */
+function gvizCell(c){
+  if(!c || c.v == null) return '';
+  const v = c.v;
+  if(typeof v === 'string'){
+    const m = v.match(/^Date\((\d+),(\d+),(\d+)/);
+    if(m) return m[1] + '-' + String(+m[2] + 1).padStart(2,'0') + '-' + String(+m[3]).padStart(2,'0');
+  }
+  return v;
+}
+async function fromSheet(){
+  const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=' + encodeURIComponent(SHEET_TAB);
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  const m = (await res.text()).match(/setResponse\(([\s\S]*)\)\s*;?\s*$/);
+  if(!m) throw new Error('ಶೀಟ್ ಉತ್ತರ ಸರಿಯಿಲ್ಲ (ಶೀಟ್ ಹಂಚಿಕೆ ಪರಿಶೀಲಿಸಿ)');
+  const obj = JSON.parse(m[1]);
+  if(obj.status !== 'ok' || !obj.table) throw new Error('ಶೀಟ್ ಸ್ಥಿತಿ: ' + obj.status);
+  const cols = obj.table.cols.map((c,i) => (c.label && String(c.label).trim()) || ('#' + (i+1)));
+  return obj.table.rows.map(r => { const o = {}; cols.forEach((k,i) => { o[k] = gvizCell(r.c && r.c[i]); }); return o; });
+}
+async function fromScript(){
+  if(!SCRIPT_URL) throw new Error('Apps Script ಲಿಂಕ್ ಇಲ್ಲ');
+  const res = await fetch(SCRIPT_URL + '?action=list');
+  const data = await res.json();
+  const rows = Array.isArray(data) ? data : (data && data.rows);
+  if(!Array.isArray(rows)) throw new Error('Apps Script ಯಿಂದ ಸಾಲುಗಳು ಬರಲಿಲ್ಲ');
+  return rows;
+}
+async function fetchRows(){
+  let e1 = null;
+  if(SCRIPT_URL){ try{ return await fromScript(); }catch(e){ e1 = e; } }
+  try{ return await fromSheet(); }
+  catch(e2){ throw new Error((e1 ? 'Script: ' + e1.message + '\nSheet: ' : '') + e2.message); }
+}
+
+/* ---------- ಸಾಮಾನ್ಯೀಕರಣ ---------- */
+function classKey(v){
+  const s = String(v == null ? '' : v).trim().toUpperCase().replace(/\s+/g,'');
+  if(s === 'LKG' || s === 'ಎಲ್.ಕೆ.ಜಿ') return 'lkg';
+  if(s === 'UKG' || s === 'ಯು.ಕೆ.ಜಿ') return 'ukg';
+  const m = s.match(/^([1-7])(?:\.0+)?$/);
+  return m ? 'c' + m[1] : null;
+}
+function normDate(v){
+  if(v == null) return null;
+  const s = String(v).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if(/^\d{4}-\d{2}-\d{2}T/.test(s)){
+    const d = new Date(s); if(isNaN(d)) return null;
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  const m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  return m ? m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0') : null;
+}
+function pick(row, names){
+  const keys = Object.keys(row);
+  for(const n of names){ const k = keys.find(k => k.trim().toLowerCase() === n); if(k !== undefined) return row[k]; }
+  for(const n of names){ const k = keys.find(k => k.trim().toLowerCase().includes(n)); if(k !== undefined) return row[k]; }
+  return undefined;
+}
+const num = (v) => Math.max(0, parseInt(v, 10) || 0);
+function normalize(rows){
+  const out = [];
+  rows.forEach(r => {
+    if(!r || typeof r !== 'object') return;
+    const date = normDate(pick(r, ['date','ದಿನಾಂಕ']));
+    const k = classKey(pick(r, ['class','ತರಗತಿ']));
+    if(!date || !k) return;
+    out.push({
+      date, k,
+      school: String(pick(r, ['school','ಶಾಲೆ']) || '').trim(),
+      enr: num(pick(r, ['enrollment','ದಾಖಲಾತಿ'])),
+      att: num(pick(r, ['attendance','ಹಾಜರಾತಿ'])),
+      egg: num(pick(r, ['egg','ಮೊಟ್ಟೆ'])),
+      ban: num(pick(r, ['banana','ಬಾಳೆ']))
+    });
+  });
+  return out;
+}
+
+/* ---------- ತೋರಿಸುವುದು ---------- */
+const fmtDate = (d) => d.split('-').reverse().join('-');
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function render(){
+  const date = $('dateInput').value;
+  const day = ROWS.filter(r => r.date === date);
+  const by = {}; day.forEach(r => {
+    const a = by[r.k] || (by[r.k] = {enr:0, att:0, egg:0, ban:0, n:0});
+    a.enr += r.enr; a.att += r.att; a.egg += r.egg; a.ban += r.ban; a.n++;
+  });
+  const T = {enr:0, att:0, egg:0, ban:0};
+  let h = '';
+  if(!day.length){
+    h = '<div class="empty">' + (date ? fmtDate(date) + ' ದಿನಾಂಕದ ಮಾಹಿತಿ ಇನ್ನೂ ಬಂದಿಲ್ಲ.' : 'ದಿನಾಂಕ ಆರಿಸಿ.') + '</div>';
+  } else {
+    let rowsHtml = '', got = 0;
+    CLASSES.forEach(c => {
+      const a = by[c.k];
+      if(!a){ rowsHtml += '<tr class="miss"><td>' + c.t + '</td><td colspan="4" class="msg">ಸಲ್ಲಿಸಿಲ್ಲ</td></tr>'; }
+      else {
+        got++; T.enr += a.enr; T.att += a.att; T.egg += a.egg; T.ban += a.ban;
+        rowsHtml += '<tr><td>' + c.t + (a.n > 1 ? '<small style="color:var(--muted)">(' + a.n + ' ಸಲ್ಲಿಕೆ ಕೂಡಿಸಿದೆ)</small>' : '') + '</td><td>' + a.enr + '</td><td>' + a.att + '</td><td>' + a.egg + '</td><td>' + a.ban + '</td></tr>';
+      }
+      const g = GROUPS.find(g => g.end === c.k);
+      if(g){
+        const S = {enr:0, att:0, egg:0, ban:0};
+        g.members.forEach(m => { const x = by[m]; if(x){ S.enr += x.enr; S.att += x.att; S.egg += x.egg; S.ban += x.ban; } });
+        rowsHtml += '<tr class="sub"><td>' + g.t + '</td><td>' + S.enr + '</td><td>' + S.att + '</td><td>' + S.egg + '</td><td>' + S.ban + '</td></tr>';
+      }
+    });
+    h += '<div class="cards">' +
+      [['ಒಟ್ಟು ದಾಖಲಾತಿ',T.enr],['ಒಟ್ಟು ಹಾಜರಾತಿ',T.att],['ಒಟ್ಟು ಮೊಟ್ಟೆ',T.egg],['ಒಟ್ಟು ಬಾಳೆಹಣ್ಣು',T.ban]]
+        .map(x => '<div class="card"><div class="l">' + x[0] + '</div><div class="n">' + x[1] + '</div></div>').join('') + '</div>';
+    h += '<table><thead><tr><th>ತರಗತಿ</th><th>ದಾಖಲಾತಿ</th><th>ಹಾಜರಾತಿ</th><th>ಮೊಟ್ಟೆ</th><th>ಬಾಳೆಹಣ್ಣು</th></tr></thead><tbody>' + rowsHtml +
+         '<tr class="tot"><td>ಒಟ್ಟು ಮೊತ್ತ</td><td>' + T.enr + '</td><td>' + T.att + '</td><td>' + T.egg + '</td><td>' + T.ban + '</td></tr></tbody></table>';
+    h += '<div class="note">' + CLASSES.length + ' ತರಗತಿಗಳಲ್ಲಿ ' + got + ' ತರಗತಿಯ ಮಾಹಿತಿ ಬಂದಿದೆ.' +
+         (got < CLASSES.length ? ' ಬಾಕಿ ತರಗತಿಗಳ ಮಾಹಿತಿ ಬಂದ ನಂತರ "ಮಾಹಿತಿ ಹೊಸದಾಗಿ ತನ್ನಿ" ಒತ್ತಿ.' : '') + '</div>';
+
+    // ಶೀಟ್‌ನಲ್ಲಿ ಬೇರೆ ಬೇರೆ ಶಾಲೆ/ಮಾಧ್ಯಮದ ಹೆಸರಿದ್ದರೆ ಅವುಗಳ ಪ್ರತ್ಯೇಕ ಒಟ್ಟು
+    const bs = {}; day.forEach(r => {
+      const n = r.school || '(ಹೆಸರಿಲ್ಲ)';
+      const a = bs[n] || (bs[n] = {enr:0, att:0, egg:0, ban:0}); a.enr += r.enr; a.att += r.att; a.egg += r.egg; a.ban += r.ban;
+    });
+    const names = Object.keys(bs);
+    if(names.length > 1){
+      h += '<h2>ಶಾಲೆ / ಮಾಧ್ಯಮವಾರು ಒಟ್ಟು</h2><table><thead><tr><th>ಹೆಸರು</th><th>ದಾಖಲಾತಿ</th><th>ಹಾಜರಾತಿ</th><th>ಮೊಟ್ಟೆ</th><th>ಬಾಳೆಹಣ್ಣು</th></tr></thead><tbody>' +
+        names.map(n => '<tr><td>' + esc(n) + '</td><td>' + bs[n].enr + '</td><td>' + bs[n].att + '</td><td>' + bs[n].egg + '</td><td>' + bs[n].ban + '</td></tr>').join('') + '</tbody></table>';
+    }
+  }
+  $('out').innerHTML = h;
+  // ಇತ್ತೀಚಿನ ದಿನಾಂಕಗಳು
+  const dates = [...new Set(ROWS.map(r => r.date))].sort().reverse().slice(0, 12);
+  $('chips').innerHTML = dates.length ? dates.map(d => '<button type="button" class="chip' + (d === date ? ' on' : '') + '" data-d="' + d + '">' + fmtDate(d) + '</button>').join('') : '<span class="note">ಮಾಹಿತಿ ಇಲ್ಲ</span>';
+  document.title = SCHOOL_NAME + ' — ' + (date ? fmtDate(date) : 'ದಿನದ ಮಾಹಿತಿ');
+}
+function setDate(d){ $('dateInput').value = d; try{ localStorage.setItem('mdmViewer_' + SCHOOL_NAME + '_date', d); }catch(e){} render(); }
+function shift(n){
+  const v = $('dateInput').value; if(!v) return;
+  const d = new Date(v + 'T00:00:00'); d.setDate(d.getDate() + n);
+  setDate(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'));
+}
+const todayStr = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+
+async function load(){
+  const btn = $('reloadBtn'), st = $('status');
+  btn.disabled = true; st.className = 'status'; st.textContent = 'ಮಾಹಿತಿ ತರುತ್ತಿದೆ…';
+  try{
+    ROWS = normalize(await fetchRows());
+    const t = new Date();
+    st.textContent = 'ಮಾಹಿತಿ ತರಲಾಗಿದೆ (' + ROWS.length + ' ಸಾಲುಗಳು) — ' + String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+  }catch(e){
+    st.className = 'status err';
+    st.textContent = 'ಮಾಹಿತಿ ತರಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನೆಟ್‌ವರ್ಕ್, Apps Script ಡಿಪ್ಲಾಯ್ (Anyone) ಅಥವಾ ಶೀಟ್ ಹಂಚಿಕೆ ಪರಿಶೀಲಿಸಿ.\nದೋಷ: ' + e.message;
+  }finally{ btn.disabled = false; render(); }
+}
+
+$('dateInput').addEventListener('change', (e) => setDate(e.target.value));
+$('prevBtn').addEventListener('click', () => shift(-1));
+$('nextBtn').addEventListener('click', () => shift(1));
+$('todayBtn').addEventListener('click', () => setDate(todayStr()));
+$('reloadBtn').addEventListener('click', load);
+$('printBtn').addEventListener('click', () => window.print());
+$('chips').addEventListener('click', (e) => { const b = e.target.closest('[data-d]'); if(b) setDate(b.dataset.d); });
+
+(function init(){
+  let d = todayStr();
+  try{ d = localStorage.getItem('mdmViewer_' + SCHOOL_NAME + '_date') || d; }catch(e){}
+  $('dateInput').value = d;
+  load();
+})();
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
